@@ -8,6 +8,7 @@ import eu.deltasource.internship.alivingecosystem.repository.herbivoreRepository
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class HerbivoreServiceImpl implements HerbivoreService {
 
@@ -25,7 +26,7 @@ public class HerbivoreServiceImpl implements HerbivoreService {
 		if (sampleAnimal.getLivingType() == LivingType.GROUP) {
 			HerbivoreGroup herbivoreGroup = new HerbivoreGroup(nameOfAnimal + " Group", sampleAnimal, numberOfAnimals);
 			List<Herbivore> newListHerbivore = herbivoreGroup.getAnimals();
-			int idGroup = herbivoreGroup.getId();
+			UUID idGroup = herbivoreGroup.getId();
 			// add list of animals to the existing group
 			for (int i = 0; i < numberOfAnimals; i++) {
 				sampleAnimal = createsHerbivoreSample(sampleAnimal);
@@ -127,7 +128,7 @@ public class HerbivoreServiceImpl implements HerbivoreService {
 	private void reproduceHerbivoreGroup(List<Herbivore> newBornAnimalsList, Herbivore herbivore) {
 		HerbivoreGroup herbivoreGroup = new HerbivoreGroup(herbivore.getName() + " Group ", herbivore, 3);
 		List<Herbivore> newListHerbivore = herbivoreGroup.getAnimals();
-		int idGroup = herbivoreGroup.getId();
+		UUID idGroup = herbivoreGroup.getId();
 		// add list of animals to the existing group
 		for (int i = 0; i < 3; i++) {
 			Herbivore newHerbivore = createsHerbivoreSample(herbivore);
