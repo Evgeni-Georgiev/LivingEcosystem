@@ -3,10 +3,11 @@ package eu.deltasource.internship.alivingecosystem.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public abstract class AnimalGroup<T extends Animal> {
 
-    protected int id;
+    protected UUID id;
 
     protected int numberOfAnimals;
 
@@ -23,7 +24,7 @@ public abstract class AnimalGroup<T extends Animal> {
         this.numberOfAnimals = numberOfAnimals;
     }
 
-    public abstract int getId();
+    public abstract UUID getId();
 
     public abstract String getNameGroup();
 
@@ -34,7 +35,7 @@ public abstract class AnimalGroup<T extends Animal> {
     @Override
     public String toString() {
         return "AnimalGroup{" +
-            "id=" + id +
+//            "id=" + id +
             "Name of the group of these animals: " + nameGroup +
             "animals=" + animals +
             "sampleAnimal=" + sampleAnimal.getName() +

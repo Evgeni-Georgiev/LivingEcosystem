@@ -4,20 +4,17 @@ import eu.deltasource.internship.alivingecosystem.model.AnimalGroup;
 import eu.deltasource.internship.alivingecosystem.model.animals.Carnivore;
 
 import java.util.List;
+import java.util.UUID;
 
 public class CarnivoreGroup extends AnimalGroup<Carnivore> {
 
-	private static int idCounter = 1;
-
-    private final int id;
-
     public CarnivoreGroup(String nameGroup, Carnivore sampleAnimal, int numberOfAnimals) {
         super(nameGroup, sampleAnimal, numberOfAnimals);
-        this.id = idCounter++;
+        this.id = UUID.randomUUID();
     }
 
     @Override
-    public int getId() {
+    public UUID getId() {
         return id;
     }
 
