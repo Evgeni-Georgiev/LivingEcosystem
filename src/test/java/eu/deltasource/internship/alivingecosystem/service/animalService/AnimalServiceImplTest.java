@@ -8,19 +8,23 @@ import eu.deltasource.internship.alivingecosystem.model.animals.Carnivore;
 import eu.deltasource.internship.alivingecosystem.model.animals.Herbivore;
 import eu.deltasource.internship.alivingecosystem.repository.carnivoreGroupRepository.CarnivoreGroupRepository;
 import eu.deltasource.internship.alivingecosystem.repository.herbivoreGroupRepository.HerbivoreGroupRepository;
+import eu.deltasource.internship.alivingecosystem.repository.herbivoreRepository.HerbivoreRepository;
 import eu.deltasource.internship.alivingecosystem.service.carnivoreService.CarnivoreServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AnimalServiceImplTest {
@@ -30,6 +34,9 @@ class AnimalServiceImplTest {
 
 	@Mock
 	HerbivoreGroupRepository herbivoreGroupRepository;
+
+	@Mock
+	HerbivoreRepository herbivoreRepository;
 
 	@Mock
 	CarnivoreServiceImpl carnivoreService;
@@ -48,9 +55,9 @@ class AnimalServiceImplTest {
 		carnivoreList.add(carnivore);
 		carnivoreList.add(carnivore1);
 		carnivoreList.add(carnivore2);
-		carnivoreList.get(0).setGroupId(2);
-		carnivoreList.get(1).setGroupId(2);
-		carnivoreList.get(2).setGroupId(2);
+		carnivoreList.get(0).setGroupId(UUID.fromString("38400000-8cf0-11bd-b23e-10b96e4ef00d"));
+		carnivoreList.get(1).setGroupId(UUID.fromString("38400000-8cf0-11bd-b23e-10b96e4ef00d"));
+		carnivoreList.get(2).setGroupId(UUID.fromString("38400000-8cf0-11bd-b23e-10b96e4ef00d"));
 		CarnivoreGroup carnivoreGroup = new CarnivoreGroup("Grouped Cheetah", carnivoreList.get(0), 3);
 		carnivoreGroup.getAnimals().add(carnivore);
 		carnivoreGroup.getAnimals().add(carnivore1);
@@ -59,19 +66,21 @@ class AnimalServiceImplTest {
 		List<Herbivore> herbivoreList = new ArrayList<>();
 		Herbivore herbivore = new Herbivore("Grouped Zebra", HabitatType.LAND, 49, 50, 5, LivingType.GROUP, 10, 10, 80.0);
 		herbivoreList.add(herbivore);
-		herbivoreList.get(0).setGroupId(2);
+		herbivoreList.get(0).setGroupId(UUID.fromString("48400000-8cf0-11bd-b23e-10b96e4ef00d"));
 
 		HerbivoreGroup herbivoreGroup = new HerbivoreGroup("Grouped Zebra", herbivoreList.get(0), 3);
 		herbivoreGroup.getAnimals().add(herbivore);
 
-		when(carnivoreGroupRepository.findCarnivoreGroupForCarnivore(any(Carnivore.class))).thenReturn(carnivoreGroup);
-		when(herbivoreGroupRepository.findHerbivoreGroupForHerbivore(any(Herbivore.class))).thenReturn(herbivoreGroup);
+		ArgumentCaptor<Herbivore> herbivoreArgumentCaptor = ArgumentCaptor.forClass(Herbivore.class);
+		when(carnivoreGroupRepository.findCarnivoreGroupForCarnivore(any(Carnivore.class))).thenReturn(Optional.of(carnivoreGroup));
+		when(herbivoreGroupRepository.findHerbivoreGroupForHerbivore(any(Herbivore.class))).thenReturn(Optional.of(herbivoreGroup));
 		carnivoreService.hungerLevelDecrease(carnivore, herbivore);
 
 		// When
 		classUnderTest.simulateAttack(carnivore, herbivore);
 
 		// Then
+		verify(herbivoreRepository, times(1)).removeHerbivore(herbivoreArgumentCaptor.capture());
 		Assertions.assertEquals("Group Cheetah", carnivore.getName());
 
 	}

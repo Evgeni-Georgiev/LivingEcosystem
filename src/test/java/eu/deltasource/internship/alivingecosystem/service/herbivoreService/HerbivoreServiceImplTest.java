@@ -18,6 +18,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class HerbivoreServiceImplTest {
@@ -102,7 +104,7 @@ class HerbivoreServiceImplTest {
 		when(herbivoreRepository.getAllHerbivores()).thenReturn(initTestDataGroup());
 
 		// setup mock object for herbivoreGroupRepository, when findHerbivoreGroupForHerbivore() is called it will return a new object HerbivoreGroup
-		when(herbivoreGroupRepository.findHerbivoreGroupForHerbivore(any(Herbivore.class))).thenReturn(new HerbivoreGroup("testGroup", herbivore, 3));
+		when(herbivoreGroupRepository.findHerbivoreGroupForHerbivore(any(Herbivore.class))).thenReturn(Optional.of(new HerbivoreGroup("testGroup", herbivore, 3)));
 
 		// When
 		classUnderTest.reduceHerbivoreReproductionRate();
@@ -146,7 +148,7 @@ class HerbivoreServiceImplTest {
 		List<Herbivore> herbivoreList = new ArrayList<>();
 
 		herbivoreList.add(new Herbivore("Group Zebra", HabitatType.LAND, 23, 24, 5, LivingType.GROUP, 0, 3, 80.0));
-		herbivoreList.get(0).setGroupId(2);
+		herbivoreList.get(0).setGroupId(UUID.fromString("38400000-8cf0-11bd-b23e-10b96e4ef00d"));
 
 		HerbivoreGroup herbivoreGroup = new HerbivoreGroup("testGroup", herbivoreList.get(0), 3);
 
@@ -158,7 +160,7 @@ class HerbivoreServiceImplTest {
 
 		// setup mock object for herbivore repository, when getAllHerbivores() is called it will return test data
 		when(herbivoreRepository.getAllHerbivores()).thenReturn(herbivoreList);
-		when(herbivoreGroupRepository.findHerbivoreGroupForHerbivore(any(Herbivore.class))).thenReturn(herbivoreGroup);
+		when(herbivoreGroupRepository.findHerbivoreGroupForHerbivore(any(Herbivore.class))).thenReturn(Optional.of(herbivoreGroup));
 
 		// When
 		classUnderTest.increasesHerbivoresAgeForEveryIteration();
