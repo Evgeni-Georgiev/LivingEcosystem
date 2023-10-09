@@ -5,7 +5,6 @@ import eu.deltasource.internship.alivingecosystem.model.animals.Herbivore;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.Collections.unmodifiableList;
 
@@ -13,7 +12,7 @@ public class HerbivoreGroupRepositoryImpl implements HerbivoreGroupRepository {
 
 	List<HerbivoreGroup> allHerbivoreGroupsList = new ArrayList<>();
 
-	private static HerbivoreGroupRepositoryImpl instance = null;
+	static HerbivoreGroupRepositoryImpl instance = null;
 
 	public static HerbivoreGroupRepositoryImpl getInstance() {
 		if (instance == null) {
@@ -36,9 +35,10 @@ public class HerbivoreGroupRepositoryImpl implements HerbivoreGroupRepository {
 	}
 
 	@Override
-	public Optional<HerbivoreGroup> findHerbivoreGroupForHerbivore(Herbivore herbivore) {
+	public HerbivoreGroup findHerbivoreGroupForHerbivore(Herbivore herbivore) {
 		return allHerbivoreGroupsList.stream()
 			.filter(group -> group.getId() == herbivore.getGroupId())
-			.findFirst();
+			.findFirst()
+			.orElse(null);
 	}
 }

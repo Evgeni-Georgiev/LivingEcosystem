@@ -4,15 +4,15 @@ import eu.deltasource.internship.alivingecosystem.enums.HabitatType;
 import eu.deltasource.internship.alivingecosystem.enums.LivingType;
 import eu.deltasource.internship.alivingecosystem.model.Animal;
 
-import java.util.UUID;
-
 public class Carnivore extends Animal {
+
+    private static int nextId = 1;
 
     private double attackPoints;
 
 	private int hungerLevel;
 
-	private final int hungerRate;
+	private int hungerRate;
 
     public Carnivore(String name, HabitatType habitat, int age, int maxAge, int weight, LivingType livingType, int reproductionRate, int originalReproductionRate, double attackPoints, int hungerLevel, int hungerRate) {
         super(name, habitat, age, maxAge, weight, livingType, reproductionRate, originalReproductionRate);
@@ -20,7 +20,7 @@ public class Carnivore extends Animal {
 		this.hungerLevel = hungerLevel;
 		this.originalReproductionRate = reproductionRate;
 		this.hungerRate = hungerRate;
-        this.id = UUID.randomUUID();
+        this.id = nextId++;
     }
 
     public double getAttackPoints() {

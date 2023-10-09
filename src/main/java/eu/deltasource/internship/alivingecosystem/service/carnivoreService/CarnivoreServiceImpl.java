@@ -6,10 +6,10 @@ import eu.deltasource.internship.alivingecosystem.model.animals.Carnivore;
 import eu.deltasource.internship.alivingecosystem.model.animals.Herbivore;
 import eu.deltasource.internship.alivingecosystem.repository.carnivoreGroupRepository.CarnivoreGroupRepository;
 import eu.deltasource.internship.alivingecosystem.repository.carnivoreRepository.CarnivoreRepository;
+import eu.deltasource.internship.alivingecosystem.repository.herbivoreRepository.HerbivoreRepositoryImpl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static eu.deltasource.internship.alivingecosystem.helper.DecreaseHungerLevelCalculator.decreaseHungerLevelByFormula;
 import static eu.deltasource.internship.alivingecosystem.helper.DecreaseHungerLevelCalculator.validateIfHungerLevelIsLessThanZero;
@@ -37,7 +37,7 @@ public class CarnivoreServiceImpl implements CarnivoreService {
 			carnivore.setReproductionRate(currentReproductionRate);
 
 			if (carnivore.getReproductionRate() == 0) {
-				if (carnivoreGroupRepository.findCarnivoreGroupForCarnivore(carnivore).isPresent()) {
+				if (carnivoreGroupRepository.findCarnivoreGroupForCarnivore(carnivore) != null) {
 					reproduceCarnivoreGroup(newBornAnimalsList, carnivore);
 				} else {
 					reproduceAloneCarnivores(newBornAnimalsList, carnivore);
@@ -53,7 +53,7 @@ public class CarnivoreServiceImpl implements CarnivoreService {
 		if (sampleAnimal.getLivingType() == LivingType.GROUP) {
 			CarnivoreGroup carnivoreGroup = new CarnivoreGroup(nameOfAnimal + " Group", sampleAnimal, numberOfAnimals);
 			List<Carnivore> newListCarnivore = carnivoreGroup.getAnimals();
-			UUID idGroup = carnivoreGroup.getId();
+			int idGroup = carnivoreGroup.getId();
 			for (int i = 0; i < numberOfAnimals; i++) {
 				sampleAnimal = createsCarnivoreSample(sampleAnimal);
 				newListCarnivore.add(sampleAnimal);
@@ -79,10 +79,8 @@ public class CarnivoreServiceImpl implements CarnivoreService {
 
 		List<Carnivore> deadAnimalsList = new ArrayList<>();
 		for (var carnivore : carnivoreRepository.getAllCarnivores()) {
-			if (carnivoreGroupRepository.findCarnivoreGroupForCarnivore(carnivore).isPresent()) {
-				CarnivoreGroup carnivoreGroup = carnivoreGroupRepository.findCarnivoreGroupForCarnivore(carnivore).orElse(new CarnivoreGroup("Belongs to no group", carnivore, 0));
-				List<Carnivore> allCarnivoresFromGroup = carnivoreGroup.getAnimals();
-				for (var memberOfGroup : allCarnivoresFromGroup) {
+			if (carnivoreGroupRepository.findCarnivoreGroupForCarnivore(carnivore) != null) {
+				for (var memberOfGroup : carnivoreGroupRepository.findCarnivoreGroupForCarnivore(carnivore).getAnimals()) {
 					int currentAge = memberOfGroup.getAge();
 					currentAge += increaseCounter;
 					memberOfGroup.setAge(currentAge);
@@ -126,14 +124,13 @@ public class CarnivoreServiceImpl implements CarnivoreService {
 		int attackerWeight = carnivore.getWeight();
 		int decreaseHungerLevelFormula = decreaseHungerLevel(caughtPreyWeight, attackerWeight);
 
-		if (carnivore.getLivingType().equals(LivingType.GROUP) && carnivoreGroupRepository.findCarnivoreGroupForCarnivore(carnivore).isPresent()) {
+		if (carnivore.getLivingType().equals(LivingType.GROUP) && carnivoreGroupRepository.findCarnivoreGroupForCarnivore(carnivore) != null) {
 
-			CarnivoreGroup carnivoreGroup = carnivoreGroupRepository.findCarnivoreGroupForCarnivore(carnivore).orElse(new CarnivoreGroup("Belongs to no group", carnivore, 0));
-			List<Carnivore> allCarnivoresFromGroup = carnivoreGroup.getAnimals();
+			List<Carnivore> groupMembers = findCarnivoreGroup(carnivore);
 
-			int carnivoreGroupCaughtPrey = allCarnivoresFromGroup.size();
+			int carnivoreGroupCaughtPrey = groupMembers.size();
 			int preyWeightDistribution = decreaseHungerLevelFormula / (carnivoreGroupCaughtPrey + 1);
-			for (Carnivore carnivoreGroupMember : allCarnivoresFromGroup) {
+			for (Carnivore carnivoreGroupMember : groupMembers) {
 				int memberHungerLevel = carnivoreGroupMember.getHungerLevel();
 				memberHungerLevel -= preyWeightDistribution;
 				carnivoreGroupMember.setHungerLevel(memberHungerLevel);
@@ -186,6 +183,21 @@ public class CarnivoreServiceImpl implements CarnivoreService {
 		);
 	}
 
+	/**
+	 * Finds the group a carnivore belongs to.
+	 *
+	 * @param carnivore
+	 * @return
+	 */
+	private List<Carnivore> findCarnivoreGroup(Carnivore carnivore) {
+		CarnivoreGroup carnivoreGroup = carnivoreGroupRepository.findCarnivoreGroupForCarnivore(carnivore);
+		if (carnivoreGroup != null) {
+			carnivoreGroup.getAnimals();
+		}
+		List<Carnivore> groupMembers = new ArrayList<>(carnivoreGroup.getAnimals());
+		return groupMembers;
+	}
+
 	private static int decreaseHungerLevel(int caughtPreyWeight, int attackerWeight) {
 		return decreaseHungerLevelByFormula(caughtPreyWeight, attackerWeight);
 	}
@@ -231,7 +243,7 @@ public class CarnivoreServiceImpl implements CarnivoreService {
 		carnivore.setReproductionRate(carnivore.getOriginalReproductionRate());
 		CarnivoreGroup carnivoreGroup = new CarnivoreGroup(carnivore.getName() + " Group", carnivore, 3);
 		List<Carnivore> newListCarnivore = carnivoreGroup.getAnimals();
-		UUID idGroup = carnivoreGroup.getId();
+		int idGroup = carnivoreGroup.getId();
 		// add list of animals to the existing group
 		for (int i = 0; i < 3; i++) {
 			Carnivore newCarnivore = createsCarnivoreSample(carnivore);

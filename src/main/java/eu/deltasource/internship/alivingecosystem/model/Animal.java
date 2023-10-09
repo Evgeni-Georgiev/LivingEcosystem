@@ -3,13 +3,11 @@ package eu.deltasource.internship.alivingecosystem.model;
 import eu.deltasource.internship.alivingecosystem.enums.HabitatType;
 import eu.deltasource.internship.alivingecosystem.enums.LivingType;
 
-import java.util.UUID;
-
 public abstract class Animal {
 
-    protected UUID id;
+    protected int id;
 
-	protected UUID groupId;
+	protected int groupId;
 
     protected int age;
 
@@ -38,11 +36,15 @@ public abstract class Animal {
 		this.originalReproductionRate = originalReproductionRate;
     }
 
-	public UUID getGroupId() {
+    public void setId(int id) {
+        this.id = id;
+    }
+
+	public int getGroupId() {
 		return groupId;
 	}
 
-	public void setGroupId(UUID groupId) {
+	public void setGroupId(int groupId) {
 		this.groupId = groupId;
 	}
 

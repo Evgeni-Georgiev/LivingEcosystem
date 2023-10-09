@@ -4,9 +4,9 @@ import eu.deltasource.internship.alivingecosystem.enums.HabitatType;
 import eu.deltasource.internship.alivingecosystem.enums.LivingType;
 import eu.deltasource.internship.alivingecosystem.model.Animal;
 
-import java.util.UUID;
-
 public class Herbivore extends Animal {
+
+	private static int nextId = 1;
 
     private double escapePoints;
 
@@ -14,7 +14,7 @@ public class Herbivore extends Animal {
         super(name, habitat, age, maxAge, weight, livingType, reproductionRate, originalReproductionRate);
         this.escapePoints = escapePoints;
 		this.originalReproductionRate = reproductionRate;
-        this.id = UUID.randomUUID();
+        this.id = nextId++;
     }
 
     public double getEscapePoints() {

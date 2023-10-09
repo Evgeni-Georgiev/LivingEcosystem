@@ -39,7 +39,7 @@ public class EcoSystemServiceImpl implements EcoSystemService {
 
 		Carnivore lion = new Carnivore("Grouped Lion", HabitatType.LAND, 1, 20, 150, LivingType.GROUP, 6, 6, 45.0, 0, 20);
 		Carnivore cheetah = new Carnivore("Single Cheetah", HabitatType.LAND, 1, 30, 60, LivingType.ALONE, 5, 5, 115.0, 0, 15);
-		Carnivore tiger = new Carnivore("Single Tiger", HabitatType.LAND, 1, 20, 200, LivingType.ALONE, 6, 6, 23.0, 0, 18);
+		Carnivore tiger = new Carnivore("Grouped Tiger", HabitatType.LAND, 1, 20, 200, LivingType.ALONE, 6, 6, 23.0, 0, 18);
 		Carnivore hyena = new Carnivore("Grouped Hyena", HabitatType.LAND, 1, 24, 50, LivingType.GROUP, 5, 5, 33.0, 0, 14);
 
 		Herbivore zebra = new Herbivore("Grouped Zebra", HabitatType.LAND, 1, 50, 300, LivingType.GROUP, 10, 10, 80.0);
@@ -54,7 +54,7 @@ public class EcoSystemServiceImpl implements EcoSystemService {
 		List<Carnivore> carnivores = carnivoreRepository.getAllCarnivores();
 		List<Herbivore> herbivores = herbivoreRepository.getAllHerbivores();
 
-		while (carnivores.size() != 0 || herbivores.size() != 0) {
+		while (true) {
 
 			if (carnivores.size() == 0) {
 				animalService.addCreatedCarnivoresToIteration(lion, cheetah, tiger, hyena);

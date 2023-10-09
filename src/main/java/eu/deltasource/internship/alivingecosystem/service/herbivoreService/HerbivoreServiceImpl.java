@@ -8,7 +8,6 @@ import eu.deltasource.internship.alivingecosystem.repository.herbivoreRepository
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class HerbivoreServiceImpl implements HerbivoreService {
 
@@ -26,7 +25,7 @@ public class HerbivoreServiceImpl implements HerbivoreService {
 		if (sampleAnimal.getLivingType() == LivingType.GROUP) {
 			HerbivoreGroup herbivoreGroup = new HerbivoreGroup(nameOfAnimal + " Group", sampleAnimal, numberOfAnimals);
 			List<Herbivore> newListHerbivore = herbivoreGroup.getAnimals();
-			UUID idGroup = herbivoreGroup.getId();
+			int idGroup = herbivoreGroup.getId();
 			// add list of animals to the existing group
 			for (int i = 0; i < numberOfAnimals; i++) {
 				sampleAnimal = createsHerbivoreSample(sampleAnimal);
@@ -57,7 +56,7 @@ public class HerbivoreServiceImpl implements HerbivoreService {
 			herbivore.setReproductionRate(currentReproductionRate);
 
 			if (herbivore.getReproductionRate() == 0) {
-				if (herbivoreGroupRepository.findHerbivoreGroupForHerbivore(herbivore).isPresent()) {
+				if (herbivoreGroupRepository.findHerbivoreGroupForHerbivore(herbivore) != null) {
 					reproduceHerbivoreGroup(newBornAnimalsList, herbivore);
 				} else {
 					reproduceAloneHerbivores(newBornAnimalsList, herbivore);
@@ -77,10 +76,8 @@ public class HerbivoreServiceImpl implements HerbivoreService {
 
 		List<Herbivore> deadAnimalsList = new ArrayList<>();
 		for (var herbivore : herbivoreRepository.getAllHerbivores()) {
-			if (herbivoreGroupRepository.findHerbivoreGroupForHerbivore(herbivore).isPresent()) {
-				HerbivoreGroup herbivoreGroup = herbivoreGroupRepository.findHerbivoreGroupForHerbivore(herbivore).orElse(new HerbivoreGroup("Belongs to no group", herbivore, 0));
-				List<Herbivore> allHerbivoresFromGroup = herbivoreGroup.getAnimals();
-				for (var memberOfGroup : allHerbivoresFromGroup) {
+			if (herbivoreGroupRepository.findHerbivoreGroupForHerbivore(herbivore) != null) {
+				for (var memberOfGroup : herbivoreGroupRepository.findHerbivoreGroupForHerbivore(herbivore).getAnimals()) {
 					int currentAge = memberOfGroup.getAge();
 					currentAge += increaseCounter;
 					memberOfGroup.setAge(currentAge);
@@ -128,7 +125,7 @@ public class HerbivoreServiceImpl implements HerbivoreService {
 	private void reproduceHerbivoreGroup(List<Herbivore> newBornAnimalsList, Herbivore herbivore) {
 		HerbivoreGroup herbivoreGroup = new HerbivoreGroup(herbivore.getName() + " Group ", herbivore, 3);
 		List<Herbivore> newListHerbivore = herbivoreGroup.getAnimals();
-		UUID idGroup = herbivoreGroup.getId();
+		int idGroup = herbivoreGroup.getId();
 		// add list of animals to the existing group
 		for (int i = 0; i < 3; i++) {
 			Herbivore newHerbivore = createsHerbivoreSample(herbivore);

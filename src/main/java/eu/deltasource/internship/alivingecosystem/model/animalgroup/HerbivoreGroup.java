@@ -4,17 +4,20 @@ import eu.deltasource.internship.alivingecosystem.model.AnimalGroup;
 import eu.deltasource.internship.alivingecosystem.model.animals.Herbivore;
 
 import java.util.List;
-import java.util.UUID;
 
 public class HerbivoreGroup extends AnimalGroup<Herbivore> {
 
+	private static int idCounter = 1;
+
+    private final int id;
+
     public HerbivoreGroup(String nameGroup, Herbivore sampleAnimal, int numberOfAnimals) {
         super(nameGroup, sampleAnimal, numberOfAnimals);
-        this.id = UUID.randomUUID();
+        this.id = idCounter++;
     }
 
     @Override
-    public UUID getId() {
+    public int getId() {
         return id;
     }
 

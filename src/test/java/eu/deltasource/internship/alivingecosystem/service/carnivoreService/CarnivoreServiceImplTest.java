@@ -10,6 +10,7 @@ import eu.deltasource.internship.alivingecosystem.enums.HabitatType;
 import eu.deltasource.internship.alivingecosystem.enums.LivingType;
 import eu.deltasource.internship.alivingecosystem.repository.carnivoreGroupRepository.CarnivoreGroupRepository;
 import eu.deltasource.internship.alivingecosystem.repository.carnivoreRepository.CarnivoreRepository;
+import eu.deltasource.internship.alivingecosystem.repository.herbivoreRepository.HerbivoreRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,8 +21,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class CarnivoreServiceImplTest {
@@ -31,6 +30,9 @@ class CarnivoreServiceImplTest {
 
 	@Mock
 	CarnivoreGroupRepository carnivoreGroupRepository;
+
+	@Mock
+	HerbivoreRepository herbivoreRepository;
 
 	@InjectMocks
 	CarnivoreServiceImpl classUnderTest;
@@ -100,10 +102,10 @@ class CarnivoreServiceImplTest {
 		carnivoreList.add(carnivore);
 		carnivoreList.add(carnivore1);
 		carnivoreList.add(carnivore2);
-		carnivoreList.get(0).setGroupId(UUID.fromString("38400000-8cf0-11bd-b23e-10b96e4ef00d"));
-		carnivoreList.get(1).setGroupId(UUID.fromString("38400000-8cf0-11bd-b23e-10b96e4ef00d"));
-		carnivoreList.get(2).setGroupId(UUID.fromString("38400000-8cf0-11bd-b23e-10b96e4ef00d"));
-		CarnivoreGroup carnivoreGroup = new CarnivoreGroup("Cheetah Group", carnivoreList.get(0), 3);
+		carnivoreList.get(0).setGroupId(2);
+		carnivoreList.get(1).setGroupId(2);
+		carnivoreList.get(2).setGroupId(2);
+		CarnivoreGroup carnivoreGroup = new CarnivoreGroup("testGroup", carnivoreList.get(0), 3);
 		carnivoreGroup.getAnimals().add(carnivore);
 		carnivoreGroup.getAnimals().add(carnivore1);
 		carnivoreGroup.getAnimals().add(carnivore2);
@@ -111,12 +113,12 @@ class CarnivoreServiceImplTest {
 		List<Herbivore> herbivoreList = new ArrayList<>();
 		Herbivore herbivore = new Herbivore("Grouped Zebra", HabitatType.LAND, 49, 50, 5, LivingType.GROUP, 10, 10, 80.0);
 		herbivoreList.add(herbivore);
-		herbivoreList.get(0).setGroupId(UUID.fromString("48400000-8cf0-11bd-b23e-10b96e4ef00d"));
+		herbivoreList.get(0).setGroupId(2);
 
-		HerbivoreGroup herbivoreGroup = new HerbivoreGroup("Zebra Group", herbivoreList.get(0), 3);
+		HerbivoreGroup herbivoreGroup = new HerbivoreGroup("testGroup1", herbivoreList.get(0), 3);
 		herbivoreGroup.getAnimals().add(herbivore);
 
-		when(carnivoreGroupRepository.findCarnivoreGroupForCarnivore(any(Carnivore.class))).thenReturn(Optional.of(carnivoreGroup));
+		when(carnivoreGroupRepository.findCarnivoreGroupForCarnivore(any(Carnivore.class))).thenReturn(carnivoreGroup);
 
 		// When
 		classUnderTest.hungerLevelDecrease(carnivore, herbivore);
@@ -151,7 +153,7 @@ class CarnivoreServiceImplTest {
 		Carnivore carnivore = new Carnivore("Grouped Tiger", HabitatType.LAND, 1, 20, 200, LivingType.GROUP, 10, 10,  23.0, 0, 18);
 		ArgumentCaptor<Carnivore> carnivoreArgumentCaptor = ArgumentCaptor.forClass(Carnivore.class);
 		when(carnivoreRepository.getAllCarnivores()).thenReturn(initTestDataGroup());
-		when(carnivoreGroupRepository.findCarnivoreGroupForCarnivore(any(Carnivore.class))).thenReturn(Optional.of(new CarnivoreGroup("testGroup", carnivore, 3)));
+		when(carnivoreGroupRepository.findCarnivoreGroupForCarnivore(any(Carnivore.class))).thenReturn(new CarnivoreGroup("testGroup", carnivore, 3));
 
 		// When
 		classUnderTest.reduceCarnivoreReproductionRate();
@@ -184,7 +186,7 @@ class CarnivoreServiceImplTest {
 		// Given
 		List<Carnivore> carnivoreList = new ArrayList<>();
 		carnivoreList.add(new Carnivore("Group Tiger", HabitatType.LAND, 23, 24, 5, LivingType.GROUP, 0, 3, 80.0, 0, 15));
-		carnivoreList.get(0).setGroupId(UUID.fromString("38400000-8cf0-11bd-b23e-10b96e4ef00d"));
+		carnivoreList.get(0).setGroupId(2);
 
 		CarnivoreGroup carnivoreGroup = new CarnivoreGroup("testGroup", carnivoreList.get(0), 3);
 		Carnivore carnivore = new Carnivore("Grouped Tiger", HabitatType.LAND, 49, 50, 300, LivingType.GROUP, 10, 10, 80.0, 0, 15);
@@ -192,7 +194,7 @@ class CarnivoreServiceImplTest {
 
 		ArgumentCaptor<Carnivore> carnivoreArgumentCaptor = ArgumentCaptor.forClass(Carnivore.class);
 		when(carnivoreRepository.getAllCarnivores()).thenReturn(carnivoreList);
-		when(carnivoreGroupRepository.findCarnivoreGroupForCarnivore(any(Carnivore.class))).thenReturn(Optional.of(carnivoreGroup));
+		when(carnivoreGroupRepository.findCarnivoreGroupForCarnivore(any(Carnivore.class))).thenReturn(carnivoreGroup);
 
 		// When
 		classUnderTest.increasesCarnivoresAgeForEveryIteration();
