@@ -1,8 +1,6 @@
 package eu.deltasource.internship.alivingecosystem.service.animalService;
 
 import eu.deltasource.internship.alivingecosystem.helper.AttackChanceCalculator;
-import eu.deltasource.internship.alivingecosystem.model.animalgroup.CarnivoreGroup;
-import eu.deltasource.internship.alivingecosystem.model.animalgroup.HerbivoreGroup;
 import eu.deltasource.internship.alivingecosystem.model.animals.Carnivore;
 import eu.deltasource.internship.alivingecosystem.model.animals.Herbivore;
 import eu.deltasource.internship.alivingecosystem.repository.carnivoreGroupRepository.CarnivoreGroupRepository;
@@ -66,16 +64,14 @@ public class AnimalServiceImpl implements AnimalService {
 		double chanceForSuccess = AttackChanceCalculator.chanceForSuccessOfAttack(attacker, target);
 		int randomCoefficient = new Random().nextInt(0, 80);
 		List<Herbivore> attackedHerbivores = new ArrayList<>();
-
-		CarnivoreGroup carnivoreGroup = carnivoreGroupRepository.findCarnivoreGroupForCarnivore(attacker).orElse(new CarnivoreGroup("Belongs to no group", attacker, 0));
 		if (chanceForSuccess < randomCoefficient) {
 			carnivoreService.hungerLevelIncrease(attacker);
 			System.out.println(target.getName() + " escapes from " + attacker.getName());
 		} else {
 			// The herbivore did not escape
 			carnivoreService.hungerLevelDecrease(attacker, target);
-			if (carnivoreGroupRepository.findCarnivoreGroupForCarnivore(attacker).isPresent()) {
-				System.out.println(target.getName() + " is killed by " + carnivoreGroup.getNameGroup());
+			if (carnivoreGroupRepository.findCarnivoreGroupForCarnivore(attacker) != null) {
+				System.out.println(target.getName() + " is killed by " + carnivoreGroupRepository.findCarnivoreGroupForCarnivore(attacker).getNameGroup());
 			} else {
 				System.out.println(target.getName() + " is killed by " + attacker.getName());
 			}
@@ -100,14 +96,10 @@ public class AnimalServiceImpl implements AnimalService {
 	 * @return return escape points based if the herbivore is group or alone
 	 */
 	private double getsEscapePoints(Herbivore target, double escapePoints) {
-		if (herbivoreGroupRepository.findHerbivoreGroupForHerbivore(target).isPresent()) {
-			HerbivoreGroup herbivoreGroup = herbivoreGroupRepository.findHerbivoreGroupForHerbivore(target).orElse(new HerbivoreGroup("Belongs to no group", target, 0));
-			Herbivore groupedHerbivore = herbivoreGroup.getSampleAnimal();
-			List<Herbivore> allHerbivoresFromGroup = herbivoreGroup.getAnimals();
-
-			var sizeOfHerbivoresGroupConsistsOf = allHerbivoresFromGroup.size();
-			escapePoints = groupedHerbivore.getEscapePoints() * sizeOfHerbivoresGroupConsistsOf;
-		} else if (herbivoreGroupRepository.findHerbivoreGroupForHerbivore(target).isEmpty()) {
+		if (herbivoreGroupRepository.findHerbivoreGroupForHerbivore(target) != null) {
+			var sizeOfHerbivoresGroupConsistsOf = herbivoreGroupRepository.findHerbivoreGroupForHerbivore(target).getAnimals().size();
+			escapePoints = herbivoreGroupRepository.findHerbivoreGroupForHerbivore(target).getSampleAnimal().getEscapePoints() * sizeOfHerbivoresGroupConsistsOf;
+		} else if (herbivoreGroupRepository.findHerbivoreGroupForHerbivore(target) == null) {
 			escapePoints = target.getEscapePoints();
 		}
 		return escapePoints;
@@ -121,13 +113,10 @@ public class AnimalServiceImpl implements AnimalService {
 	 * @return attack points based if the carnivore is group or alone
 	 */
 	private double getsAttackPoints(Carnivore attacker, double attackPoints) {
-		if (carnivoreGroupRepository.findCarnivoreGroupForCarnivore(attacker).isPresent()) {
-			CarnivoreGroup carnivoreGroup = carnivoreGroupRepository.findCarnivoreGroupForCarnivore(attacker).orElse(new CarnivoreGroup("Belongs to no group", attacker, 0));
-			Carnivore groupedCarnivore = carnivoreGroup.getSampleAnimal();
-			List<Carnivore> allCarnivoresFromGroup = carnivoreGroup.getAnimals();
-			var sizeOfCarnivoresGroupConsistsOf = allCarnivoresFromGroup.size();
-			attackPoints = groupedCarnivore.getAttackPoints() * sizeOfCarnivoresGroupConsistsOf;
-		} else if (carnivoreGroupRepository.findCarnivoreGroupForCarnivore(attacker).isEmpty()) {
+		if (carnivoreGroupRepository.findCarnivoreGroupForCarnivore(attacker) != null) {
+			var sizeOfCarnivoresGroupConsistsOf = carnivoreGroupRepository.findCarnivoreGroupForCarnivore(attacker).getAnimals().size();
+			attackPoints = carnivoreGroupRepository.findCarnivoreGroupForCarnivore(attacker).getSampleAnimal().getAttackPoints() * sizeOfCarnivoresGroupConsistsOf;
+		} else if (carnivoreGroupRepository.findCarnivoreGroupForCarnivore(attacker) == null) {
 			attackPoints = attacker.getAttackPoints();
 		}
 		return attackPoints;

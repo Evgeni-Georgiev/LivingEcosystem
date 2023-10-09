@@ -14,7 +14,7 @@ public class CarnivoreRepositoryImpl implements CarnivoreRepository {
 
     List<Carnivore> animals = new ArrayList<>();
 
-	private static CarnivoreRepositoryImpl instance = null;
+	static CarnivoreRepositoryImpl instance = null;
 
     public static CarnivoreRepositoryImpl getInstance() {
         if (instance == null) {

@@ -36,6 +36,10 @@ public abstract class Animal {
 		this.originalReproductionRate = originalReproductionRate;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
 	public int getGroupId() {
 		return groupId;
 	}

@@ -56,7 +56,7 @@ public class HerbivoreServiceImpl implements HerbivoreService {
 			herbivore.setReproductionRate(currentReproductionRate);
 
 			if (herbivore.getReproductionRate() == 0) {
-				if (herbivoreGroupRepository.findHerbivoreGroupForHerbivore(herbivore).isPresent()) {
+				if (herbivoreGroupRepository.findHerbivoreGroupForHerbivore(herbivore) != null) {
 					reproduceHerbivoreGroup(newBornAnimalsList, herbivore);
 				} else {
 					reproduceAloneHerbivores(newBornAnimalsList, herbivore);
@@ -76,10 +76,8 @@ public class HerbivoreServiceImpl implements HerbivoreService {
 
 		List<Herbivore> deadAnimalsList = new ArrayList<>();
 		for (var herbivore : herbivoreRepository.getAllHerbivores()) {
-			if (herbivoreGroupRepository.findHerbivoreGroupForHerbivore(herbivore).isPresent()) {
-				HerbivoreGroup herbivoreGroup = herbivoreGroupRepository.findHerbivoreGroupForHerbivore(herbivore).orElse(new HerbivoreGroup("Belongs to no group", herbivore, 0));
-				List<Herbivore> allHerbivoresFromGroup = herbivoreGroup.getAnimals();
-				for (var memberOfGroup : allHerbivoresFromGroup) {
+			if (herbivoreGroupRepository.findHerbivoreGroupForHerbivore(herbivore) != null) {
+				for (var memberOfGroup : herbivoreGroupRepository.findHerbivoreGroupForHerbivore(herbivore).getAnimals()) {
 					int currentAge = memberOfGroup.getAge();
 					currentAge += increaseCounter;
 					memberOfGroup.setAge(currentAge);
